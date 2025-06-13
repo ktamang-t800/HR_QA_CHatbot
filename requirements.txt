@@ -4,3 +4,4 @@ python-dotenv
 PyPDF2
 docx
 numpy
+python-docx
