@@ -3,6 +3,14 @@ import PyPDF2
 import docx
 import numpy as np
 
+SAMPLE_QUESTIONS = [
+    "How many annual leave days do I get?",
+    "What is the sick leave policy?",
+    "Can I carry forward unused leave?",
+    "What is the parental leave policy?",
+    "What are the rules for resignation?",
+]
+ 
 def chunk_text(text, max_chunk_length=500):
     """Split text into small chunks, hard cut every N characters."""
     chunks = []
@@ -65,7 +73,20 @@ if all_text:
     st.write("---")
     st.subheader("Ask a question about your HR policies:")
 
-    user_question = st.text_input("Your question", placeholder="e.g., What is the leave policy?")
+    # FAQ AUTO-SUGGEST FEATURE STARTS HERE
+    st.markdown("#### Suggested questions:")
+    cols = st.columns(len(SAMPLE_QUESTIONS))
+    for i, q in enumerate(SAMPLE_QUESTIONS):
+        if cols[i].button(q):
+            st.session_state['user_question'] = q
+
+    user_question = st.text_input(
+        "Your question",
+        placeholder="e.g., What is the leave policy?",
+        value=st.session_state.get('user_question', "")
+    )
+    # FAQ AUTO-SUGGEST FEATURE ENDS HERE
+
     if st.button("Get Answer") and user_question.strip():
         with st.spinner("Searching your HR policy..."):
             import os
@@ -103,3 +124,5 @@ if all_text:
 
         st.success("Answer:")
         st.write(answer)
+        # Optionally clear the pre-filled question after answer
+        st.session_state['user_question'] = ""
