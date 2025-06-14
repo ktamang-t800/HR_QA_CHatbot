@@ -102,9 +102,13 @@ if all_text:
 
     st.markdown("")
 
-    # Show chat input
     st.subheader("Your question")
-    user_question = st.text_input("Type your question about HR policies:", value=selected_question)
+    # Chat session state
+    if 'chat_history' not in st.session_state:
+        st.session_state['chat_history'] = []
+
+    user_question = st.text_input("Type your question about HR policies:", value=selected_question, key="user_question_input")
+
     if st.button("Get Answer") and user_question.strip():
         with st.spinner("Searching your HR policy..."):
             import os
@@ -136,8 +140,53 @@ if all_text:
             )
             answer = response.choices[0].message.content
 
-        st.success("Answer:")
-        st.write(answer)
+        # Save Q&A to chat history
+        st.session_state['chat_history'].append({"question": user_question, "answer": answer})
 
-    # Optionally: Show previous questions and answers, chat history, etc. (already in your last version)
+        # Clear the input after sending
+        st.experimental_rerun()
 
+    # --- Chat History Chat Bubbles ---
+    if st.session_state['chat_history']:
+        st.write("---")
+        st.markdown("<h4>Chat History</h4>", unsafe_allow_html=True)
+        for idx, qa in enumerate(st.session_state['chat_history']):
+            # Alternate left/right bubbles
+            align = "left" if idx % 2 == 0 else "right"
+            st.markdown(
+                f"""
+                <div style='
+                    text-align: {align};
+                    margin-bottom: 0.6em;
+                '>
+                  <div style='
+                      display: inline-block;
+                      background: #F0F4FA;
+                      padding: 0.9em 1.2em;
+                      border-radius: 1.2em;
+                      min-width: 15em;
+                      max-width: 80%;
+                      font-size: 1.08em;
+                      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+                      color: #222;
+                      margin-bottom: 0.18em;
+                  '>
+                    <b>Q:</b> {qa['question']}
+                  </div><br>
+                  <div style='
+                      display: inline-block;
+                      background: #D0E2FB;
+                      padding: 0.9em 1.2em;
+                      border-radius: 1.2em;
+                      min-width: 15em;
+                      max-width: 80%;
+                      font-size: 1.08em;
+                      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+                      color: #222;
+                      margin-top: 0.08em;
+                  '>
+                    <b>A:</b> {qa['answer']}
+                  </div>
+                </div>
+                """, unsafe_allow_html=True
+            )
