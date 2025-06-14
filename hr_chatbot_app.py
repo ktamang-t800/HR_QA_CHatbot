@@ -143,8 +143,6 @@ if all_text:
         # Save Q&A to chat history
         st.session_state['chat_history'].append({"question": user_question, "answer": answer})
 
-        # Clear the input after sending
-        st.experimental_rerun()
 
     # --- Chat History Chat Bubbles ---
     if st.session_state['chat_history']:
