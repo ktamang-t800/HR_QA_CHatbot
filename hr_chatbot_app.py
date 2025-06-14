@@ -68,12 +68,13 @@ if uploaded_files:
         all_text += f"\n\n---- {uploaded_file.name} ----\n\n" + file_text
 
     st.success(f"Uploaded {len(uploaded_files)} files!")
+
 # User Q&A Section
 if all_text:
     st.write("---")
     st.subheader("Ask a question about your HR policies:")
 
-    # FAQ AUTO-SUGGEST FEATURE STARTS HERE
+    # FAQ AUTO-SUGGEST FEATURE
     st.markdown("#### Suggested questions:")
     cols = st.columns(len(SAMPLE_QUESTIONS))
     for i, q in enumerate(SAMPLE_QUESTIONS):
@@ -85,7 +86,10 @@ if all_text:
         placeholder="e.g., What is the leave policy?",
         value=st.session_state.get('user_question', "")
     )
-    # FAQ AUTO-SUGGEST FEATURE ENDS HERE
+
+    # --- Chat/History Feature ---
+    if 'chat_history' not in st.session_state:
+        st.session_state['chat_history'] = []
 
     if st.button("Get Answer") and user_question.strip():
         with st.spinner("Searching your HR policy..."):
@@ -124,5 +128,16 @@ if all_text:
 
         st.success("Answer:")
         st.write(answer)
+        # Save Q&A to chat history
+        st.session_state['chat_history'].append({"question": user_question, "answer": answer})
         # Optionally clear the pre-filled question after answer
         st.session_state['user_question'] = ""
+
+    # --- Display Chat/History ---
+    if st.session_state['chat_history']:
+        st.write("---")
+        st.markdown("#### Your previous questions and answers:")
+        for i, qa in enumerate(reversed(st.session_state['chat_history']), 1):
+            with st.expander(f"Q{i}: {qa['question']}"):
+                st.markdown(f"**Answer:** {qa['answer']}")
+
