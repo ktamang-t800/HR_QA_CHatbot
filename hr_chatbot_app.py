@@ -144,46 +144,46 @@ if all_text:
         st.session_state['chat_history'].append({"question": user_question, "answer": answer})
 
 
-    # --- Chat History Chat Bubbles ---
+        # --- Chat History with Avatars and Polished Bubbles ---
     if st.session_state['chat_history']:
         st.write("---")
-        st.markdown("<h4>Chat History</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='margin-bottom:1em;'>Chat History</h4>", unsafe_allow_html=True)
+        chat_icon_user = "👤"
+        chat_icon_ai = "🤖"
         for idx, qa in enumerate(st.session_state['chat_history']):
-            # Alternate left/right bubbles
-            align = "left" if idx % 2 == 0 else "right"
             st.markdown(
                 f"""
-                <div style='
-                    text-align: {align};
-                    margin-bottom: 0.6em;
-                '>
-                  <div style='
-                      display: inline-block;
-                      background: #F0F4FA;
-                      padding: 0.9em 1.2em;
-                      border-radius: 1.2em;
-                      min-width: 15em;
-                      max-width: 80%;
-                      font-size: 1.08em;
-                      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-                      color: #222;
-                      margin-bottom: 0.18em;
-                  '>
-                    <b>Q:</b> {qa['question']}
-                  </div><br>
-                  <div style='
-                      display: inline-block;
-                      background: #D0E2FB;
-                      padding: 0.9em 1.2em;
-                      border-radius: 1.2em;
-                      min-width: 15em;
-                      max-width: 80%;
-                      font-size: 1.08em;
-                      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-                      color: #222;
-                      margin-top: 0.08em;
-                  '>
-                    <b>A:</b> {qa['answer']}
+                <div style='display: flex; flex-direction: {'row' if idx % 2 == 0 else 'row-reverse'}; align-items: flex-start; margin-bottom: 0.9em;'>
+                  <div style='font-size:2em;margin:0 0.7em 0 0.7em;'>{chat_icon_user if idx % 2 == 0 else chat_icon_ai}</div>
+                  <div>
+                    <div style='
+                        display: inline-block;
+                        background: {"#F0F4FA" if idx % 2 == 0 else "#E5F6E3"};
+                        padding: 0.7em 1.2em;
+                        border-radius: 1.4em;
+                        min-width: 10em;
+                        max-width: 80vw;
+                        font-size: 1.08em;
+                        color: #222;
+                        margin-bottom: 0.16em;
+                        box-shadow: 0 1.5px 5px rgba(0,0,0,0.03);
+                    '>
+                        <b>{'You' if idx % 2 == 0 else 'AI'}:</b> <span>{qa['question'] if idx % 2 == 0 else qa['answer']}</span>
+                    </div>
+                    <div style='
+                        display: inline-block;
+                        background: {"#D0E2FB" if idx % 2 == 0 else "#FFF7D6"};
+                        padding: 0.7em 1.2em;
+                        border-radius: 1.4em;
+                        min-width: 10em;
+                        max-width: 80vw;
+                        font-size: 1.08em;
+                        color: #222;
+                        margin-top: 0.11em;
+                        box-shadow: 0 1.5px 6px rgba(0,0,0,0.06);
+                    '>
+                        <b>{'AI' if idx % 2 == 0 else 'You'}:</b> <span>{qa['answer'] if idx % 2 == 0 else qa['question']}</span>
+                    </div>
                   </div>
                 </div>
                 """, unsafe_allow_html=True
